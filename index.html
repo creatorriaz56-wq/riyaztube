@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101116">
+  <title>RiyazTube — ভিডিও কমিউনিটি</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101116;
+      --panel: #1b1d26;
+      --text: #f7f7fb;
+      --muted: #a7a9b7;
+      --red: #ff3348;
+      --border: #343643;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans Bengali", sans-serif;
+    }
+
+    header {
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 38px;
+      height: 29px;
+      border-radius: 9px;
+      background: var(--red);
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    header h1 span { color: var(--red); }
+
+    main {
+      width: min(100% - 28px, 460px);
+      margin: 38px auto;
+    }
+
+    .hero { text-align: center; margin-bottom: 24px; }
+
+    .hero h2 {
+      font-size: clamp(25px, 6vw, 34px);
+      margin: 0 0 10px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      background: #252733;
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 12px 8px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .tab.active {
+      color: white;
+      background: #382129;
+      border-color: var(--red);
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin: 15px 0 8px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      color: white;
+      background: #11131a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus { border-color: var(--red); }
+
+    button { cursor: pointer; font: inherit; }
+
+    .primary {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 10px;
+      color: white;
+      background: var(--red);
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .primary:disabled { opacity: .6; cursor: wait; }
+
+    .secondary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: white;
+    }
+
+    .hint {
+      font-size: 13px;
+      line-height: 1.7;
+      text-align: center;
+      color: var(--muted);
+      margin: 17px 0 0;
+    }
+
+    #message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 9px;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    #message.show { display: block; }
+    #message.success { color: #a5f3bd; background: #173325; }
+    #message.error { color: #ffb3ba; background: #3b2027; }
+    #message.info { color: #c6dcff; background: #202f47; }
+
+    .account {
+      text-align: center;
+      padding: 15px 0;
+    }
+
+    .avatar {
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: #382129;
+      color: #ff8390;
+      font-size: 27px;
+    }
+
+    .account h2 { overflow-wrap: anywhere; font-size: 21px; }
+    .account p { color: var(--muted); line-height: 1.7; }
+
+    .coming {
+      margin-top: 20px;
+      padding: 18px;
+      border: 1px dashed #454857;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    footer {
+      text-align: center;
+      color: #858796;
+      padding: 0 20px 28px;
+      font-size: 12px;
+    }
+
+    [hidden] { display: none !important; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo" aria-hidden="true">▶</div>
+    <h1>Riyaz<span>Tube</span></h1>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>দেখুন, শিখুন, যুক্ত থাকুন</h2>
+      <p>RiyazTube-এ আপনাকে স্বাগতম।<br>
+      নিজের অ্যাকাউন্ট তৈরি করে শুরু করুন।</p>
+    </section>
+
+    <section class="card" id="authCard">
+      <div class="tabs">
+        <button class="tab active" id="signupTab" type="button">
+          নতুন অ্যাকাউন্ট
+        </button>
+        <button class="tab" id="loginTab" type="button">
+          লগইন
+        </button>
+      </div>
+
+      <form id="authForm">
+        <label for="email">ইমেইল ঠিকানা</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="আপনার ইমেইল লিখুন"
+          required
+        >
+
+        <label for="password">পাসওয়ার্ড</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="কমপক্ষে ৬ অক্ষর"
+          minlength="6"
+          required
+        >
+
+        <button class="primary" id="submitButton" type="submit">
+          অ্যাকাউন্ট তৈরি করুন
+        </button>
+      </form>
+
+      <div id="message" role="status" aria-live="polite"></div>
+
+      <p class="hint">
+        আপনার অ্যাকাউন্টের পাসওয়ার্ড অন্য কারও সঙ্গে শেয়ার করবেন না।
+      </p>
+    </section>
+
+    <section class="card" id="accountCard" hidden>
+      <div class="account">
+        <div class="avatar">✓</div>
+        <h2>আপনি লগইন করেছেন!</h2>
+        <p id="accountEmail"></p>
+        <p>আপনার RiyazTube অ্যাকাউন্ট সংযুক্ত হয়েছে।</p>
+        <button class="secondary" id="logoutButton" type="button">
+          লগআউট
+        </button>
+      </div>
+
+      <div class="coming">
+        <strong>পরবর্তী ধাপ</strong><br>
+        এখানে পরে ভিডিও ফিড, ভিডিও প্লেয়ার, প্রোফাইল,
+        লাইক ও কমেন্টের সুবিধা যুক্ত করা হবে।
+      </div>
+
+      <div id="accountMessage" role="status"></div>
+    </section>
+  </main>
+
+  <footer>
+    RiyazTube · আপনার শেখা ও ভিডিও কমিউনিটির যাত্রা
+  </footer>
+
+  <script>
+    // Supabase project connection
+    const SUPABASE_URL =
+      'https://azzluxvjezivowthbtqa.supabase.co';
+
+    const SUPABASE_KEY =
+      'sb_publishable_-eF7bqxRA7VEg-GddY5R1A_gHrlU0Gv';
+
+    const client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const authForm = document.getElementById('authForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitButton = document.getElementById('submitButton');
+    const signupTab = document.getElementById('signupTab');
+    const loginTab = document.getElementById('loginTab');
+    const authCard = document.getElementById('authCard');
+    const accountCard = document.getElementById('accountCard');
+    const message = document.getElementById('message');
+
+    let mode = 'signup';
+    let busy = false;
+
+    function showMessage(text, type = 'info') {
+      message.textContent = text;
+      message.className = 'show ' + type;
+    }
+
+    function clearMessage() {
+      message.textContent = '';
+      message.className = '';
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      const isSignup = mode === 'signup';
+
+      signupTab.classList.toggle('active', isSignup);
+      loginTab.classList.toggle('active', !isSignup);
+
+      passwordInput.autocomplete =
+        isSignup ? 'new-password' : 'current-password';
+
+      submitButton.textContent =
+        isSignup ? 'অ্যাকাউন্ট তৈরি করুন' : 'লগইন করুন';
+
+      clearMessage();
+    }
+
+    signupTab.addEventListener('click', () => setMode('signup'));
+    loginTab.addEventListener('click', () => setMode('login'));
+
+    authForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (busy) return;
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showMessage('ইমেইল ও পাসওয়ার্ড লিখুন।', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের দিন।', 'error');
+        return;
+      }
+
+      busy = true;
+      submitButton.disabled = true;
+      submitButton.textContent = 'অপেক্ষা করুন...';
+      clearMessage();
+
+      try {
+        if (mode === 'signup') {
+          const { data, error } = await client.auth.signUp({
+            email,
+            password
+          });
+
+          if (error) throw error;
+
+          if (data.session) {
+            showMessage(
+              'অ্যাকাউন্ট তৈরি হয়েছে এবং আপনি লগইন করেছেন।',
+              'success'
+            );
+          } else {
+            showMessage(
+              'নিবন্ধনের অনুরোধ সফল হয়েছে। আপনার ইমেইলে যাচাইকরণ লিংক পাঠানো হয়ে থাকলে সেটিতে চাপ দিন। এরপর লগইন করুন।',
+              'success'
+            );
+          }
+        } else {
+          const { error } = await client.auth.signInWithPassword({
+            email,
+            password
+          });
+
+          if (error) throw error;
+
+          showMessage('লগইন সফল হয়েছে।', 'success');
+        }
+      } catch (error) {
+        showMessage(
+          'সমস্যা হয়েছে: ' + (error.message || 'আবার চেষ্টা করুন।'),
+          'error'
+        );
+      } finally {
+        busy = false;
+        submitButton.disabled = false;
+        submitButton.textContent =
+          mode === 'signup' ? 'অ্যাকাউন্ট তৈরি করুন' : 'লগইন করুন';
+      }
+    });
+
+    function renderSession(session) {
+      if (session && session.user) {
+        authCard.hidden = true;
+        accountCard.hidden = false;
+        document.getElementById('accountEmail').textContent =
+          session.user.email || 'আপনার অ্যাকাউন্ট';
+      } else {
+        accountCard.hidden = true;
+        authCard.hidden = false;
+      }
+    }
+
+    document.getElementById('logoutButton').addEventListener(
+      'click',
+      async () => {
+        const button = document.getElementById('logoutButton');
+        button.disabled = true;
+
+        try {
+          const { error } = await client.auth.signOut();
+          if (error) throw error;
+        } catch (error) {
+          const area = document.getElementById('accountMessage');
+          area.textContent = 'লগআউট সমস্যা: ' + error.message;
+        } finally {
+          button.disabled = false;
+        }
+      }
+    );
+
+    client.auth.onAuthStateChange((_event, session) => {
+      renderSession(session);
+    });
+
+    client.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        showMessage('অ্যাকাউন্টের অবস্থা যাচাই করা যায়নি।', 'error');
+        return;
+      }
+      renderSession(data.session);
+    });
+  </script>
+</body>
+</html>
+
