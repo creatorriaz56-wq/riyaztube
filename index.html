@@ -2,335 +2,1541 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <title>RiyazTube — ভিডিও দেখুন ও শেয়ার করুন</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: #f3f5f9; color: #182033;
-      font-family: Arial, "Noto Sans Bengali", sans-serif;
-    }
-    header {
-      background: #101827; color: white; padding: 17px 16px;
-      position: sticky; top: 0; z-index: 5;
-    }
-    .head {
-      max-width: 760px; margin: auto; display: flex;
-      align-items: center; justify-content: space-between; gap: 10px;
-    }
-    .brand { font-size: 23px; font-weight: 800; color: #ff4545; }
-    .brand span { color: white; }
-    .small { font-size: 12px; color: #d2d8e5; }
-    main { max-width: 760px; margin: 22px auto; padding: 0 13px 35px; }
-    .card {
-      background: white; border-radius: 15px; padding: 19px;
-      margin-bottom: 18px; box-shadow: 0 3px 15px #15213a0b;
-    }
-    h2 { font-size: 19px; margin: 0 0 15px; }
-    p { line-height: 1.6; }
-    input {
-      display: block; width: 100%; padding: 13px; margin: 10px 0;
-      border: 1px solid #d8deea; border-radius: 9px;
-      font-size: 15px; background: white; color: #182033;
-    }
-    input[type=file] { font-size: 13px; }
-    button {
-      border: 0; border-radius: 9px; padding: 12px 15px;
-      background: #ef3038; color: white; font-weight: 700;
-      font-size: 14px; cursor: pointer;
-    }
-    button:disabled { opacity: .55; cursor: wait; }
-    .secondary { background: #182338; }
-    .light { background: #e9edf5; color: #182033; }
-    .actions { display: flex; gap: 9px; flex-wrap: wrap; }
-    .actions button { flex: 1; }
-    .notice { font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
-    .video-card {
-      border: 1px solid #edf0f5; border-radius: 13px;
-      padding: 12px; margin-top: 15px; background: white;
-    }
-    .video-card video {
-      display: block; width: 100%; max-height: 420px;
-      background: #090909; border-radius: 9px;
-    }
-    .filename { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; margin: 10px 0; }
-    .muted { color: #68748a; font-size: 13px; }
-    .hidden { display: none !important; }
-    .tag {
-      display: inline-block; border-radius: 20px; background: #fff0f0;
-      color: #d82230; padding: 5px 9px; font-size: 12px; margin-bottom: 10px;
-    }
-    footer { text-align: center; color: #778197; font-size: 12px; padding: 15px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>RiyazTube — Connect & Learn</title>
+<meta name="description" content="RiyazTube — ভিডিও দেখুন, শেয়ার করুন এবং নতুন কিছু শিখুন।">
+
+<style>
+:root{
+  --primary:#6257e8;
+  --primary-light:#f0efff;
+  --bg:#f6f7fb;
+  --surface:#ffffff;
+  --text:#202235;
+  --muted:#85899d;
+  --border:#e9eaf2;
+  --radius:18px;
+  --shadow:0 5px 24px rgba(30,35,80,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{
+  outline:2px solid var(--primary);
+  outline-offset:2px;
+}
+button:disabled{opacity:.55;cursor:not-allowed}
+a{color:inherit;text-decoration:none}
+img,video{max-width:100%}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.btn{
+  border:0;border-radius:12px;padding:11px 16px;
+  background:var(--primary);color:white;font-weight:700;
+}
+.btn.secondary{background:var(--primary-light);color:var(--primary)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.field{
+  width:100%;padding:13px 14px;border:1px solid var(--border);
+  border-radius:12px;background:#fff;color:var(--text);
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.section-title{
+  margin:0;font-size:18px;font-weight:800;letter-spacing:-.3px;
+}
+#toast{
+  position:fixed;z-index:1000;bottom:24px;left:50%;
+  transform:translateX(-50%);background:#24243a;color:#fff;
+  padding:12px 18px;border-radius:12px;max-width:90%;
+  box-shadow:var(--shadow);
+}
+.topbar{
+  height:70px;position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:18px;padding:0 5%;
+}
+.brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;white-space:nowrap}
+.brand-mark{
+  width:40px;height:40px;border-radius:14px;background:var(--primary);
+  display:grid;place-items:center;color:white;font-size:19px;
+  box-shadow:0 5px 12px #6257e83d;
+}
+.brand-name{color:var(--primary)}
+.search-wrap{
+  flex:1;max-width:510px;position:relative;
+}
+.search-wrap input{
+  width:100%;border:1px solid var(--border);background:var(--bg);
+  padding:12px 16px 12px 42px;border-radius:14px;outline:none;
+}
+.search-icon{position:absolute;left:15px;top:12px;color:var(--muted)}
+.top-actions{display:flex;align-items:center;gap:9px}
+.icon-btn{
+  width:42px;height:42px;border-radius:13px;
+  border:1px solid var(--border);background:#fff;
+  display:grid;place-items:center;font-size:19px;
+}
+.user-avatar{
+  width:40px;height:40px;border-radius:50%;object-fit:cover;
+  background:var(--primary-light);display:grid;place-items:center;
+  color:var(--primary);font-weight:800;overflow:hidden;
+}
+.app-layout{
+  max-width:1440px;margin:auto;padding:24px 5%;
+  display:grid;grid-template-columns:225px minmax(0,1fr) 260px;
+  gap:24px;align-items:start;
+}
+.sidebar{position:sticky;top:92px}
+.side-card{padding:14px}
+.nav-item{
+  width:100%;border:0;background:transparent;
+  display:flex;align-items:center;gap:13px;text-align:left;
+  padding:13px 14px;border-radius:13px;color:#696d82;
+  font-weight:700;margin:2px 0;
+}
+.nav-item .nav-icon{font-size:20px;width:25px;text-align:center}
+.nav-item.active,.nav-item:hover{background:var(--primary-light);color:var(--primary)}
+.side-divider{height:1px;background:var(--border);margin:12px 5px}
+.side-caption{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1px;padding:10px 14px}
+.sidebar-note{padding:18px;margin-top:16px}
+.sidebar-note h3{margin:0 0 8px;font-size:16px}
+.sidebar-note p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.6}
+.main-column{min-width:0}
+.welcome{
+  padding:22px 24px;border-radius:22px;
+  background:linear-gradient(125deg,#6257e8,#8b68f2 60%,#c17df2);
+  color:white;position:relative;overflow:hidden;margin-bottom:20px;
+}
+.welcome:after{
+  content:"";position:absolute;width:190px;height:190px;
+  border-radius:50%;background:#ffffff14;right:-45px;top:-75px;
+}
+.welcome h1{font-size:25px;margin:0 0 9px;position:relative;z-index:1}
+.welcome p{font-size:14px;line-height:1.6;margin:0;opacity:.9;position:relative;z-index:1}
+.create-post{padding:16px;margin-bottom:22px}
+.create-top{display:flex;gap:12px;align-items:center}
+.create-top input{
+  flex:1;min-width:0;border:0;background:var(--bg);
+  padding:14px 16px;border-radius:14px;outline:none;
+}
+.create-actions{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+  padding-top:13px;border-top:1px solid var(--border);
+}
+.action-chip{
+  flex:1;min-width:90px;border:0;background:transparent;
+  border-radius:11px;padding:10px 8px;color:#6c7085;font-weight:700;
+}
+.action-chip:hover{background:var(--bg)}
+.action-chip span{font-size:18px;margin-right:5px}
+.stories-section{padding:18px;margin-bottom:22px}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.stories-row{display:flex;gap:14px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:thin}
+.story-item{
+  flex:0 0 76px;border:0;background:transparent;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  min-width:0;color:var(--text);
+}
+.story-ring{
+  width:66px;height:66px;padding:3px;border-radius:50%;
+  background:linear-gradient(135deg,#ff8c62,#e24fbc,#6257e8);
+}
+.story-inner{
+  width:100%;height:100%;border-radius:50%;border:3px solid white;
+  background:var(--primary-light);display:grid;place-items:center;
+  overflow:hidden;font-size:22px;color:var(--primary);
+}
+.story-inner img{width:100%;height:100%;object-fit:cover}
+.story-item small{
+  width:76px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-align:center;font-size:11px;
+}
+.feed-heading{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px}
+.feed-list{display:grid;gap:18px}
+.video-card{overflow:hidden}
+.post-header{display:flex;align-items:center;gap:11px;padding:16px 17px}
+.post-person{flex:1;min-width:0}
+.post-person strong{display:block;font-size:14px;margin-bottom:4px}
+.post-person small{color:var(--muted);font-size:12px}
+.post-menu{border:0;background:transparent;font-size:22px;color:var(--muted)}
+.post-title{padding:0 17px 12px;margin:0;font-weight:700;line-height:1.6}
+.post-description{padding:0 17px 13px;margin:0;color:#656a7f;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.video-frame{width:100%;background:#111;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden}
+.video-frame video{width:100%;height:100%;object-fit:contain}
+.video-placeholder{
+  width:100%;height:100%;min-height:190px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#eeedff,#f8efff);color:var(--primary);
+  font-size:42px;
+}
+.post-stats{display:flex;justify-content:space-between;gap:10px;padding:12px 17px;color:var(--muted);font-size:12px}
+.post-actions{display:flex;gap:4px;padding:8px 12px;border-top:1px solid var(--border)}
+.post-action{
+  flex:1;border:0;background:transparent;padding:11px 4px;
+  border-radius:10px;color:#73778a;font-weight:700;font-size:13px;
+}
+.post-action:hover{background:var(--bg)}
+.post-action.liked{color:var(--primary)}
+.comment-box{padding:0 15px 15px;display:flex;gap:8px}
+.comment-box input{flex:1;min-width:0;border:1px solid var(--border);border-radius:12px;padding:11px}
+.comments-list{padding:0 17px 14px;display:grid;gap:9px}
+.comment-row{background:var(--bg);padding:10px 12px;border-radius:12px;font-size:13px;overflow-wrap:anywhere}
+.comment-row strong{display:block;margin-bottom:4px}
+.right-card{padding:18px;margin-bottom:17px}
+.right-card h3{font-size:15px;margin:0 0 14px}
+.profile-mini{display:flex;align-items:center;gap:12px}
+.profile-mini strong{display:block;font-size:14px;margin-bottom:4px}
+.profile-mini small{color:var(--muted)}
+.profile-cover{width:100%;height:76px;object-fit:cover;border-radius:12px;background:var(--primary-light);margin-bottom:12px}
+.trending-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.trending-item:last-child{border:0;padding-bottom:0}
+.trend-number{color:var(--primary);font-weight:900}
+.trending-item strong{display:block;font-size:13px;margin-bottom:4px}
+.trending-item small{color:var(--muted);font-size:11px}
+.empty-state{text-align:center;padding:38px 18px;color:var(--muted)}
+.empty-state .empty-icon{font-size:35px;margin-bottom:10px}
+.empty-state strong{display:block;color:var(--text);margin-bottom:6px}
+.auth-wrap{max-width:440px;margin:55px auto;padding:0 18px}
+.auth-card{padding:26px}
+.auth-card h1{font-size:25px;margin:0 0 8px}
+.auth-card>p{color:var(--muted);line-height:1.6;margin:0 0 22px}
+.form-stack{display:grid;gap:13px}
+.form-stack label{font-size:13px;font-weight:700;display:grid;gap:7px}
+.auth-switch{text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
+.auth-switch button{border:0;background:transparent;color:var(--primary);font-weight:800}
+.profile-page{display:grid;gap:18px}
+.profile-cover-large{height:190px;width:100%;object-fit:cover;background:var(--primary-light);border-radius:20px 20px 0 0}
+.profile-details{padding:0 20px 20px}
+.profile-head{display:flex;align-items:end;gap:14px;margin-top:-35px;flex-wrap:wrap}
+.profile-head .user-avatar{width:88px;height:88px;border:4px solid white;font-size:25px}
+.profile-head-info{padding:0 0 8px;flex:1;min-width:130px}
+.profile-head-info h2{margin:0 0 5px;font-size:20px}
+.profile-bio{color:var(--muted);line-height:1.6;margin:14px 0}
+.profile-stats{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.profile-stats strong{color:var(--text)}
+.modal-backdrop{
+  position:fixed;inset:0;z-index:500;background:#1118279c;
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+.modal{
+  background:white;border-radius:20px;padding:22px;width:100%;
+  max-width:520px;max-height:90vh;overflow-y:auto;
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-head h2{margin:0;font-size:20px}
+.modal-close{border:0;background:var(--bg);border-radius:10px;width:36px;height:36px;font-size:20px}
+.modal-form{display:grid;gap:13px}
+.modal-form label{font-weight:700;font-size:13px;display:grid;gap:7px}
+.modal-form textarea{resize:vertical;min-height:90px}
+.bottom-nav{display:none}
+#appContent{min-width:0}
+@media(max-width:1100px){
+  .app-layout{grid-template-columns:205px minmax(0,1fr);gap:18px;padding:20px 3%}
+  .rightbar{display:none}
+  .topbar{padding:0 3%}
+}
+@media(max-width:700px){
+  body{font-size:14px;padding-bottom:68px}
+  .topbar{height:60px;padding:0 13px;gap:9px}
+  .brand{font-size:19px;gap:7px}
+  .brand-mark{width:34px;height:34px;border-radius:11px}
+  .search-wrap{max-width:none}
+  .search-wrap input{padding:10px 9px 10px 33px;font-size:12px}
+  .search-icon{left:11px;top:10px;font-size:13px}
+  .top-actions{gap:5px}
+  .top-actions .icon-btn{width:35px;height:35px;font-size:16px}
+  .top-actions .user-avatar{width:34px;height:34px}
+  .app-layout{display:block;padding:14px 12px}
+  .sidebar,.rightbar{display:none}
+  .welcome{padding:20px;border-radius:18px}
+  .welcome h1{font-size:22px}
+  .create-post{padding:12px}
+  .action-chip{min-width:80px;font-size:12px}
+  .stories-section{padding:14px}
+  .section-title{font-size:16px}
+  .post-header{padding:13px}
+  .post-title,.post-description{padding-left:13px;padding-right:13px}
+  .post-stats{padding:10px 13px}
+  .post-actions{padding:6px}
+  .post-action{font-size:12px}
+  .bottom-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:150;
+    height:62px;background:#fff;border-top:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-around;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .bottom-nav button{
+    border:0;background:transparent;display:flex;flex-direction:column;
+    align-items:center;gap:3px;color:var(--muted);font-size:10px;padding:6px;
+  }
+  .bottom-nav button span{font-size:21px}
+  .bottom-nav button.active{color:var(--primary);font-weight:800}
+  .profile-cover-large{height:135px}
+  .profile-details{padding:0 14px 16px}
+  .profile-head .user-avatar{width:72px;height:72px}
+  .auth-wrap{margin:30px auto}
+  .auth-card{padding:21px}
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="head">
-      <div>
-        <div class="brand">Riyaz<span>Tube</span></div>
-        <div class="small">ভিডিও দেখুন • শিখুন • শেয়ার করুন</div>
-      </div>
-      <span class="small">প্রাথমিক সংস্করণ</span>
+
+<div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+<header class="topbar">
+  <a class="brand" href="#" onclick="return false" aria-label="RiyazTube Home">
+    <span class="brand-mark">▶</span>
+    <span>Riyaz<span class="brand-name">Tube</span></span>
+  </a>
+
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input id="searchInput" type="search" placeholder="ভিডিও বা ক্রিয়েটর খুঁজুন..." aria-label="Search">
+  </div>
+
+  <div class="top-actions">
+    <button class="icon-btn" id="uploadTopBtn" title="ভিডিও আপলোড" aria-label="Upload">＋</button>
+    <button class="icon-btn" id="notificationBtn" title="নোটিফিকেশন" aria-label="Notifications">♧</button>
+    <button class="user-avatar" id="topAvatar" title="প্রোফাইল">R</button>
+  </div>
+</header>
+
+<div id="authView" class="auth-wrap hidden">
+  <section class="card auth-card">
+    <div class="brand" style="margin-bottom:22px">
+      <span class="brand-mark">▶</span>
+      <span>Riyaz<span class="brand-name">Tube</span></span>
     </div>
-  </header>
+    <h1 id="authTitle">স্বাগতম!</h1>
+    <p id="authDescription">অ্যাকাউন্ট খুলুন অথবা লগইন করে ভিডিও দেখুন ও শেয়ার করুন।</p>
 
-  <main>
-    <section class="card">
-      <span class="tag">স্বাগতম</span>
-      <h2>আপনার ভিডিও দুনিয়া</h2>
-      <p class="muted">এখানে ভিডিও দেখুন। অ্যাকাউন্ট তৈরি করে নিজের ভিডিও আপলোড করুন।</p>
+    <form id="authForm" class="form-stack">
+      <label id="fullNameLabel" class="hidden">আপনার নাম
+        <input id="fullNameInput" class="field" autocomplete="name" placeholder="আপনার পুরো নাম">
+      </label>
+      <label>ইমেইল
+        <input id="emailInput" class="field" type="email" autocomplete="email" required placeholder="name@example.com">
+      </label>
+      <label id="passwordLabel">পাসওয়ার্ড
+        <input id="passwordInput" class="field" type="password" autocomplete="current-password" minlength="6" required placeholder="কমপক্ষে ৬ অক্ষর">
+      </label>
+      <label id="otpLabel" class="hidden">ইমেইলে পাওয়া কোড
+        <input id="otpInput" class="field" inputmode="numeric" autocomplete="one-time-code" placeholder="৬ সংখ্যার কোড">
+      </label>
+      <button class="btn" id="authSubmit" type="submit">লগইন</button>
+      <p id="authMsg" class="small muted" aria-live="polite"></p>
+    </form>
+
+    <div class="auth-switch">
+      <span id="authSwitchText">নতুন এখানে?</span>
+      <button id="authSwitchBtn" type="button">অ্যাকাউন্ট খুলুন</button>
+    </div>
+  </section>
+</div>
+
+<div id="appContent" class="app-layout hidden">
+  <aside class="sidebar">
+    <div class="card side-card">
+      <button class="nav-item active" data-view="home"><span class="nav-icon">⌂</span> হোম ফিড</button>
+      <button class="nav-item" data-view="shorts"><span class="nav-icon">▷</span> শর্ট ভিডিও</button>
+      <button class="nav-item" data-view="saved"><span class="nav-icon">♡</span> সেভ করা</button>
+      <button class="nav-item" data-view="profile"><span class="nav-icon">◉</span> আমার প্রোফাইল</button>
+      <div class="side-divider"></div>
+      <div class="side-caption">আপনার অ্যাকাউন্ট</div>
+      <button class="nav-item" data-view="notifications"><span class="nav-icon">♧</span> নোটিফিকেশন</button>
+      <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span> সেটিংস</button>
+      <button class="nav-item" id="logoutBtn"><span class="nav-icon">↪</span> লগআউট</button>
+    </div>
+    <div class="card sidebar-note">
+      <h3>✨ শিখুন, শেয়ার করুন</h3>
+      <p>আপনার জ্ঞান ও সৃজনশীলতা সবার সঙ্গে ভাগ করে নিন।</p>
+      <button class="btn" id="sideUploadBtn" style="width:100%">＋ ভিডিও আপলোড</button>
+    </div>
+  </aside>
+
+  <main class="main-column" id="mainView">
+    <section class="welcome">
+      <h1>আপনার দুনিয়া, আপনার ভিডিও ✨</h1>
+      <p>দেখুন, শিখুন এবং আপনার পছন্দের মুহূর্তগুলো সবার সঙ্গে ভাগ করে নিন।</p>
     </section>
 
-    <section class="card" id="authCard">
-      <h2>লগইন / নতুন অ্যাকাউন্ট</h2>
-      <form id="authForm">
-        <input id="email" type="email" placeholder="আপনার ইমেইল" autocomplete="email" required>
-        <input id="password" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)" autocomplete="current-password" minlength="6" required>
-        <div class="actions">
-          <button type="submit" id="loginBtn">লগইন</button>
-          <button type="button" class="secondary" id="signupBtn">সাইনআপ</button>
+    <section class="card create-post">
+      <div class="create-top">
+        <div class="user-avatar" id="composerAvatar">R</div>
+        <input id="composerInput" placeholder="আজ কী শেয়ার করতে চান?" readonly>
+      </div>
+      <div class="create-actions">
+        <button class="action-chip" id="composerUpload"><span>🎬</span> ভিডিও</button>
+        <button class="action-chip" id="composerStory"><span>🌈</span> স্টোরি</button>
+        <button class="action-chip" id="composerText"><span>✍️</span> পোস্ট</button>
+      </div>
+    </section>
+
+    <section class="card stories-section">
+      <div class="section-heading">
+        <h2 class="section-title">স্টোরিজ</h2>
+        <button class="btn secondary" id="addStoryBtn">＋ যোগ করুন</button>
+      </div>
+      <div class="stories-row" id="storiesRow">
+        <div class="empty-state" style="padding:12px;width:100%">
+          <span class="muted small">স্টোরি লোড হচ্ছে...</span>
         </div>
-      </form>
-      <p id="authStatus" class="notice" role="status"></p>
+      </div>
     </section>
 
-    <section class="card hidden" id="uploadCard">
-      <h2>ভিডিও আপলোড করুন</h2>
-      <p class="muted" id="userEmail"></p>
-      <form id="uploadForm">
-        <input id="videoFile" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" required>
-        <p class="muted">প্রাথমিকভাবে সর্বোচ্চ ৫০ MB ফাইল নির্বাচন করুন। আপনার Storage-এর সীমা কম হলে আপলোড ব্যর্থ হতে পারে।</p>
-        <button id="uploadBtn" type="submit">ভিডিও আপলোড</button>
-      </form>
-      <p id="uploadStatus" class="notice" role="status"></p>
-      <button type="button" id="logoutBtn" class="light">লগআউট</button>
-    </section>
+    <div class="feed-heading">
+      <h2 class="section-title" id="feedTitle">আপনার ফিড</h2>
+      <button class="btn secondary" id="refreshBtn">↻ রিফ্রেশ</button>
+    </div>
 
-    <section class="card">
-      <h2>🎬 সকল ভিডিও</h2>
-      <p class="muted">নতুন ভিডিও দেখতে তালিকাটি রিফ্রেশ করুন।</p>
-      <button id="refreshBtn" class="secondary" type="button">ভিডিও রিফ্রেশ করুন</button>
-      <p id="feedStatus" class="notice" role="status">ভিডিও লোড হচ্ছে...</p>
-      <div id="videoFeed"></div>
+    <section id="feedList" class="feed-list">
+      <article class="card empty-state">
+        <div class="empty-icon">▶</div>
+        <strong>আপনার ফিড তৈরি হচ্ছে</strong>
+        <span class="small">একটু অপেক্ষা করুন...</span>
+      </article>
     </section>
-    <footer>RiyazTube © 2026 · প্রাথমিক সংস্করণ</footer>
   </main>
 
-  <script>
-    // আপনার Supabase Project URL এবং Publishable Key
-    const SUPABASE_URL = 'https://azzluxvjezivowthbtqa.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_-eF7bqxRA7VEg-GddY5R1A_gHrlU0Gv';
+  <aside class="rightbar">
+    <section class="card right-card">
+      <h3>আপনার প্রোফাইল</h3>
+      <img class="profile-cover" id="miniCover" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+      <div class="profile-mini">
+        <div class="user-avatar" id="miniAvatar">R</div>
+        <div>
+          <strong id="miniName">RiyazTube User</strong>
+          <small id="miniUsername">@creator</small>
+        </div>
+      </div>
+      <button class="btn secondary" data-view="profile" style="width:100%;margin-top:15px">প্রোফাইল দেখুন</button>
+    </section>
 
-    // "supabase" নামের সঙ্গে সংঘর্ষ এড়াতে client নাম ব্যবহার করা হয়েছে।
-    const { createClient } = window.supabase;
-    const client = createClient(SUPABASE_URL, SUPABASE_KEY);
+    <section class="card right-card">
+      <h3>🔥 জনপ্রিয় বিষয়</h3>
+      <div class="trending-item">
+        <span class="trend-number">01</span>
+        <div><strong>টেকনোলজি</strong><small>নতুন প্রযুক্তি ও টিপস</small></div>
+      </div>
+      <div class="trending-item">
+        <span class="trend-number">02</span>
+        <div><strong>শিক্ষা</strong><small>জানুন, শিখুন, এগিয়ে যান</small></div>
+      </div>
+      <div class="trending-item">
+        <span class="trend-number">03</span>
+        <div><strong>ক্রিয়েটর</strong><small>আপনার প্রতিভা দেখান</small></div>
+      </div>
+    </section>
 
-    const $ = id => document.getElementById(id);
-    let currentUser = null;
-    let loadingVideos = false;
+    <p class="small muted" style="line-height:1.8;padding:0 8px">
+      RiyazTube · ভিডিও দেখুন, শিখুন ও শেয়ার করুন।
+    </p>
+  </aside>
+</div>
 
-    function message(id, text, color) {
-      const el = $(id);
-      el.textContent = text || '';
-      el.style.color = color || '#344054';
-    }
+<nav class="bottom-nav" id="bottomNav">
+  <button class="active" data-view="home"><span>⌂</span>হোম</button>
+  <button data-view="shorts"><span>▷</span>ভিডিও</button>
+  <button id="mobileUploadBtn"><span>⊕</span>আপলোড</button>
+  <button data-view="saved"><span>♡</span>সেভ</button>
+  <button data-view="profile"><span>◉</span>প্রোফাইল</button>
+</nav>
 
-    function showSession(user) {
-      currentUser = user || null;
-      $('authCard').classList.toggle('hidden', !!currentUser);
-      $('uploadCard').classList.toggle('hidden', !currentUser);
-      $('userEmail').textContent = currentUser
-        ? 'লগইন করা অ্যাকাউন্ট: ' + currentUser.email
-        : '';
-    }
+<!-- দ্বিতীয় অংশে JavaScript শুরু হবে -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
 
-    async function loadSession() {
-      const { data, error } = await client.auth.getSession();
-      if (error) message('authStatus', error.message, '#c62828');
-      showSession(data?.session?.user || null);
-      await fetchVideos();
-    }
+/* RiyazTube — Part 2: Authentication, profile and video feed */
 
-    $('authForm').addEventListener('submit', async event => {
-      event.preventDefault();
-      const email = $('email').value.trim();
-      const password = $('password').value;
-      const btn = $('loginBtn');
+const SUPABASE_URL = "https://azzluxvjezivowthbtqa.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-eF7bqxRA7VEg-GddY5R1A_gHrlU0Gv";
 
-      btn.disabled = true;
-      $('signupBtn').disabled = true;
-      message('authStatus', 'লগইন হচ্ছে...', '#344054');
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      try {
-        const { data, error } = await client.auth.signInWithPassword({
-          email, password
-        });
-        if (error) throw error;
+let currentUser = null;
+let currentProfile = null;
+let authMode = "login";
+let pendingEmail = "";
+let videoCache = [];
+let savedVideoIds = new Set();
+let activeView = "home";
+let toastTimer = null;
 
-        showSession(data.user);
-        message('authStatus', 'লগইন সফল হয়েছে।', '#16803d');
-        $('password').value = '';
-        await fetchVideos();
-      } catch (error) {
-        message('authStatus', 'লগইন ব্যর্থ: ' + error.message, '#c62828');
-      } finally {
-        btn.disabled = false;
-        $('signupBtn').disabled = false;
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function message(id, text, isError = false) {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = isError ? "#d93652" : "#6257e8";
+}
+
+function toast(text) {
+  const el = $("toast");
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"), 3000);
+}
+
+function getInitial(name) {
+  return (String(name || "R").trim().charAt(0) || "R").toUpperCase();
+}
+
+function setAvatar(el, url, name) {
+  if (!el) return;
+  if (url) {
+    el.innerHTML = `<img src="${escapeHTML(url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    el.textContent = getInitial(name);
+  }
+}
+
+function getDisplayName(profile, user) {
+  return profile?.full_name ||
+    profile?.username ||
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "RiyazTube User";
+}
+
+function showAuth(mode = "login") {
+  authMode = mode;
+  $("authView").classList.remove("hidden");
+  $("appContent").classList.add("hidden");
+  $("bottomNav").classList.add("hidden");
+
+  const verify = mode === "verify";
+  const signup = mode === "signup";
+
+  $("authTitle").textContent = verify ? "ইমেইল যাচাই করুন" :
+    signup ? "নতুন অ্যাকাউন্ট খুলুন" : "আবার স্বাগতম!";
+  $("authDescription").textContent = verify
+    ? "আপনার ইমেইলে আসা যাচাইকরণ কোডটি লিখুন।"
+    : signup
+      ? "RiyazTube-এ যোগ দিন এবং আপনার ভিডিও শেয়ার করুন।"
+      : "লগইন করে আপনার ভিডিওর দুনিয়ায় প্রবেশ করুন।";
+
+  $("fullNameLabel").classList.toggle("hidden", !signup);
+  $("passwordLabel").classList.toggle("hidden", verify);
+  $("otpLabel").classList.toggle("hidden", !verify);
+
+  $("fullNameInput").required = signup;
+  $("passwordInput").required = !verify;
+  $("otpInput").required = verify;
+
+  $("emailInput").readOnly = verify;
+  if (verify && pendingEmail) $("emailInput").value = pendingEmail;
+
+  $("authSubmit").textContent = verify ? "কোড যাচাই করুন" :
+    signup ? "অ্যাকাউন্ট তৈরি করুন" : "লগইন";
+  $("authSwitchText").textContent = verify ? "ভুল ইমেইল?" :
+    signup ? "আগে থেকেই অ্যাকাউন্ট আছে?" : "নতুন এখানে?";
+  $("authSwitchBtn").textContent = verify ? "ইমেইল পরিবর্তন" :
+    signup ? "লগইন করুন" : "অ্যাকাউন্ট খুলুন";
+
+  message("authMsg", "");
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+
+  const email = $("emailInput").value.trim().toLowerCase();
+  const password = $("passwordInput").value;
+  const fullName = $("fullNameInput").value.trim();
+
+  $("authSubmit").disabled = true;
+  message("authMsg", "একটু অপেক্ষা করুন...");
+
+  try {
+    if (authMode === "verify") {
+      const token = $("otpInput").value.trim();
+      if (!token) throw new Error("ইমেইলে পাওয়া কোডটি লিখুন।");
+
+      const { data, error } = await db.auth.verifyOtp({
+        email: pendingEmail || email,
+        token,
+        type: "signup"
+      });
+
+      if (error) throw error;
+      if (data.user) {
+        currentUser = data.user;
+        await ensureProfile();
       }
-    });
+      await initializeApp();
+      return;
+    }
 
-    $('signupBtn').addEventListener('click', async () => {
-      const email = $('email').value.trim();
-      const password = $('password').value;
-      if (!email || password.length < 6) {
-        message('authStatus', 'সঠিক ইমেইল দিন এবং অন্তত ৬ অক্ষরের পাসওয়ার্ড লিখুন।', '#c62828');
-        return;
+    if (authMode === "signup") {
+      if (password.length < 6) {
+        throw new Error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।");
       }
 
-      $('signupBtn').disabled = true;
-      message('authStatus', 'অ্যাকাউন্ট তৈরি হচ্ছে...', '#344054');
-
-      try {
-        const { data, error } = await client.auth.signUp({ email, password });
-        if (error) throw error;
-
-        if (data.session) {
-          showSession(data.user);
-          message('authStatus', 'অ্যাকাউন্ট তৈরি হয়েছে!', '#16803d');
-        } else {
-          message('authStatus', 'সাইনআপের অনুরোধ সফল। ইমেইলে নিশ্চিতকরণ লিংক এলে সেটি খুলে তারপর লগইন করুন।', '#16803d');
+      const { data, error } = await db.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: window.location.origin + window.location.pathname
         }
-      } catch (error) {
-        message('authStatus', 'সাইনআপ ব্যর্থ: ' + error.message, '#c62828');
-      } finally {
-        $('signupBtn').disabled = false;
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        currentUser = data.user;
+        await ensureProfile();
+        await initializeApp();
+      } else {
+        pendingEmail = email;
+        showAuth("verify");
+        message("authMsg", "আপনার ইমেইলে যাচাইকরণ কোড পাঠানো হয়েছে। ইনবক্স ও স্প্যাম ফোল্ডার দেখুন।");
       }
+      return;
+    }
+
+    const { data, error } = await db.auth.signInWithPassword({
+      email, password
     });
 
-    $('logoutBtn').addEventListener('click', async () => {
-      const { error } = await client.auth.signOut();
-      if (error) {
-        message('uploadStatus', 'লগআউট ব্যর্থ: ' + error.message, '#c62828');
-        return;
+    if (error) throw error;
+    currentUser = data.user;
+    await ensureProfile();
+    await initializeApp();
+
+  } catch (error) {
+    console.error("Authentication error:", error);
+    message("authMsg", error.message || "সমস্যা হয়েছে। আবার চেষ্টা করুন।", true);
+  } finally {
+    $("authSubmit").disabled = false;
+  }
+}
+
+async function ensureProfile() {
+  if (!currentUser) return;
+
+  const name = getDisplayName(null, currentUser);
+  const username = String(
+    currentUser.user_metadata?.username ||
+    currentUser.email?.split("@")[0] ||
+    "creator"
+  ).toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 24) || "creator";
+
+  const { data, error } = await db
+    .from("profiles")
+    .select("*")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile read error:", error);
+    throw new Error("প্রোফাইল লোড করা যায়নি: " + error.message);
+  }
+
+  if (data) {
+    currentProfile = data;
+    return;
+  }
+
+  const { data: created, error: createError } = await db
+    .from("profiles")
+    .insert({
+      id: currentUser.id,
+      username,
+      full_name: name,
+      bio: ""
+    })
+    .select()
+    .single();
+
+  if (createError) {
+    console.error("Profile create error:", createError);
+    throw new Error("প্রোফাইল তৈরি করা যায়নি। profiles টেবিলের RLS নীতি পরীক্ষা করুন।");
+  }
+
+  currentProfile = created;
+}
+
+function updateProfileWidgets() {
+  const name = getDisplayName(currentProfile, currentUser);
+  const username = currentProfile?.username || "creator";
+  const avatar = currentProfile?.avatar_url || "";
+
+  $("miniName").textContent = name;
+  $("miniUsername").textContent = "@" + username;
+  setAvatar($("topAvatar"), avatar, name);
+  setAvatar($("miniAvatar"), avatar, name);
+  setAvatar($("composerAvatar"), avatar, name);
+
+  if (currentProfile?.cover_url) {
+    $("miniCover").src = currentProfile.cover_url;
+  }
+}
+
+function publicVideoUrl(path) {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+
+  const { data } = db.storage.from("videos").getPublicUrl(path);
+  return data?.publicUrl || "";
+}
+
+function formatDate(dateValue) {
+  if (!dateValue) return "এখন";
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("bn-BD", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+async function loadFeed() {
+  const feed = $("feedList");
+  feed.innerHTML = `
+    <article class="card empty-state">
+      <div class="empty-icon">⏳</div>
+      <strong>ভিডিও লোড হচ্ছে</strong>
+      <span class="small">একটু অপেক্ষা করুন...</span>
+    </article>`;
+
+  try {
+    const { data, error } = await db
+      .from("videos")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(40);
+
+    if (error) throw error;
+
+    videoCache = data || [];
+
+    if (currentUser && videoCache.length) {
+      const ids = videoCache.map(v => v.id);
+      const { data: likes, error: likeError } = await db
+        .from("video_likes")
+        .select("video_id")
+        .eq("user_id", currentUser.id)
+        .in("video_id", ids);
+
+      if (!likeError) {
+        videoCache.forEach(v => {
+          v._liked = (likes || []).some(l => String(l.video_id) === String(v.id));
+        });
       }
-      showSession(null);
-      message('uploadStatus', 'আপনি লগআউট করেছেন।', '#16803d');
+    }
+
+    renderFeed(videoCache);
+  } catch (error) {
+    console.error("Feed error:", error);
+    feed.innerHTML = `
+      <article class="card empty-state">
+        <div class="empty-icon">⚠️</div>
+        <strong>ভিডিও লোড করা যায়নি</strong>
+        <span class="small">${escapeHTML(error.message || "ডেটাবেস সংযোগ পরীক্ষা করুন।")}</span>
+        <br><br><button class="btn secondary" onclick="loadFeed()">আবার চেষ্টা করুন</button>
+      </article>`;
+  }
+}
+
+function renderFeed(items) {
+  const feed = $("feedList");
+  if (!items || !items.length) {
+    feed.innerHTML = `
+      <article class="card empty-state">
+        <div class="empty-icon">🎬</div>
+        <strong>এখনো কোনো ভিডিও নেই</strong>
+        <span class="small">প্রথম ভিডিওটি আপলোড করে শুরু করুন!</span>
+      </article>`;
+    return;
+  }
+
+  feed.innerHTML = items.map(video => {
+    const owner = video.profiles || {};
+    const name = owner.full_name || owner.username || "RiyazTube Creator";
+    const url = publicVideoUrl(video.storage_path || video.video_url || "");
+    const title = video.title || "শিরোনামহীন ভিডিও";
+    const description = video.description || "";
+    const liked = Boolean(video._liked);
+
+    return `
+      <article class="card video-card" data-video-id="${escapeHTML(video.id)}">
+        <header class="post-header">
+          <div class="user-avatar">${escapeHTML(getInitial(name))}</div>
+          <div class="post-person">
+            <strong>${escapeHTML(name)}</strong>
+            <small>${escapeHTML(formatDate(video.created_at))}</small>
+          </div>
+          <button class="post-menu" data-share="${escapeHTML(video.id)}" aria-label="শেয়ার">↗</button>
+        </header>
+        <h3 class="post-title">${escapeHTML(title)}</h3>
+        ${description ? `<p class="post-description">${escapeHTML(description)}</p>` : ""}
+        <div class="video-frame">
+          ${url
+            ? `<video src="${escapeHTML(url)}" controls playsinline preload="metadata"></video>`
+            : `<div class="video-placeholder">▶</div>`}
+        </div>
+        <div class="post-stats">
+          <span>♥ <span class="like-count">—</span> লাইক</span>
+          <span>${escapeHTML(formatDate(video.created_at))}</span>
+        </div>
+        <div class="post-actions">
+          <button class="post-action ${liked ? "liked" : ""}" data-like="${escapeHTML(video.id)}">${liked ? "♥ লাইক" : "♡ লাইক"}</button>
+          <button class="post-action" data-comment="${escapeHTML(video.id)}">▢ কমেন্ট</button>
+          <button class="post-action" data-save="${escapeHTML(video.id)}">♧ সেভ</button>
+          <button class="post-action" data-share="${escapeHTML(video.id)}">↗ শেয়ার</button>
+        </div>
+        <div class="comments-list" id="comments-${escapeHTML(video.id)}"></div>
+        <form class="comment-box" data-comment-form="${escapeHTML(video.id)}">
+          <input name="comment" maxlength="1000" placeholder="একটি কমেন্ট লিখুন..." required>
+          <button class="btn" type="submit">পাঠান</button>
+        </form>
+      </article>`;
+  }).join("");
+
+  items.forEach(video => {
+    loadLikeCount(video.id);
+    loadComments(video.id);
+  });
+}
+
+async function loadLikeCount(videoId) {
+  try {
+    const { count, error } = await db
+      .from("video_likes")
+      .select("*", { count: "exact", head: true })
+      .eq("video_id", videoId);
+
+    if (error) throw error;
+
+    const card = document.querySelector(`[data-video-id="${CSS.escape(String(videoId))}"]`);
+    if (card) card.querySelector(".like-count").textContent = count ?? 0;
+  } catch (error) {
+    console.warn("Like count unavailable:", error.message);
+  }
+}
+
+async function initializeApp() {
+  if (!currentUser) {
+    showAuth("login");
+    return;
+  }
+
+  $("authView").classList.add("hidden");
+  $("appContent").classList.remove("hidden");
+  $("bottomNav").classList.remove("hidden");
+
+  updateProfileWidgets();
+  await loadFeed();
+
+  if (typeof loadStories === "function") {
+    await loadStories();
+  }
+  if (typeof loadNotifications === "function") {
+    await loadNotifications();
+  }
+}
+
+async function boot() {
+  const { data, error } = await db.auth.getSession();
+  if (error) console.error(error);
+
+  currentUser = data?.session?.user || null;
+
+  if (currentUser) {
+    try {
+      await ensureProfile();
+      await initializeApp();
+    } catch (error) {
+      console.error(error);
+      showAuth("login");
+      message("authMsg", error.message || "অ্যাকাউন্ট লোড করা যায়নি।", true);
+    }
+  } else {
+    showAuth("login");
+  }
+}
+
+$("authForm").addEventListener("submit", handleAuthSubmit);
+
+$("authSwitchBtn").addEventListener("click", () => {
+  if (authMode === "verify") {
+    pendingEmail = "";
+    $("emailInput").readOnly = false;
+    showAuth("signup");
+  } else {
+    showAuth(authMode === "login" ? "signup" : "login");
+  }
+});
+
+$("refreshBtn").addEventListener("click", loadFeed);
+
+$("searchInput").addEventListener("input", event => {
+  const query = event.target.value.trim().toLowerCase();
+  const filtered = videoCache.filter(video =>
+    String(video.title || "").toLowerCase().includes(query) ||
+    String(video.description || "").toLowerCase().includes(query)
+  );
+  renderFeed(filtered);
+});
+
+$("topAvatar").addEventListener("click", () => {
+  if (typeof navigateTo === "function") navigateTo("profile");
+});
+
+$("uploadTopBtn").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("video");
+  else toast("তৃতীয় অংশ যোগ হলে আপলোড চালু হবে।");
+});
+
+$("sideUploadBtn").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("video");
+  else toast("তৃতীয় অংশ যোগ হলে আপলোড চালু হবে।");
+});
+
+$("composerUpload").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("video");
+  else toast("তৃতীয় অংশ যোগ হলে আপলোড চালু হবে।");
+});
+
+$("composerStory").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("story");
+  else toast("তৃতীয় অংশ যোগ হলে স্টোরি চালু হবে।");
+});
+
+$("addStoryBtn").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("story");
+  else toast("তৃতীয় অংশ যোগ হলে স্টোরি চালু হবে।");
+});
+
+$("composerText").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("post");
+  else toast("তৃতীয় অংশ যোগ হলে পোস্ট তৈরি চালু হবে।");
+});
+
+$("composerInput").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("post");
+});
+
+$("notificationBtn").addEventListener("click", () => {
+  if (typeof navigateTo === "function") navigateTo("notifications");
+  else toast("তৃতীয় অংশ যোগ হলে নোটিফিকেশন চালু হবে।");
+});
+
+$("mobileUploadBtn").addEventListener("click", () => {
+  if (typeof openUploadModal === "function") openUploadModal("video");
+  else toast("তৃতীয় অংশ যোগ হলে আপলোড চালু হবে।");
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+  if (error) {
+    toast("লগআউট করা যায়নি: " + error.message);
+    return;
+  }
+  currentUser = null;
+  currentProfile = null;
+  videoCache = [];
+  showAuth("login");
+});
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    currentProfile = null;
+    showAuth("login");
+  }
+});
+
+boot();
+</script>
+
+<!-- তৃতীয় অংশে বাকি ফাংশন এবং HTML বন্ধ হবে -->
+<script>
+/* ===== RiyazTube: Part 3 ===== */
+
+const savedKey = "riyaztube_saved_v1";
+
+function getSavedVideos() {
+  try {
+    return JSON.parse(localStorage.getItem(savedKey) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function isSaved(id) {
+  return getSavedVideos().includes(String(id));
+}
+
+async function toggleLike(id, button) {
+  if (!currentUser) {
+    alert("লাইক দিতে আগে লগইন করুন।");
+    showAuth("login");
+    return;
+  }
+
+  button.disabled = true;
+
+  try {
+    const { data: existing, error: findError } = await db
+      .from("video_likes")
+      .select("*")
+      .eq("video_id", id)
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (findError) throw findError;
+
+    if (existing) {
+      const { error } = await db
+        .from("video_likes")
+        .delete()
+        .eq("video_id", id)
+        .eq("user_id", currentUser.id);
+
+      if (error) throw error;
+    } else {
+      const { error } = await db
+        .from("video_likes")
+        .insert({ video_id: id, user_id: currentUser.id });
+
+      if (error) throw error;
+    }
+
+    await loadFeed();
+  } catch (error) {
+    console.error(error);
+    alert("লাইক আপডেট করা যায়নি। Supabase-এর video_likes টেবিলের নীতি ও কলাম পরীক্ষা করুন।");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function saveVideo(id) {
+  const saved = getSavedVideos();
+  const key = String(id);
+  const alreadySaved = saved.includes(key);
+  const updated = alreadySaved
+    ? saved.filter(item => item !== key)
+    : [...saved, key];
+
+  localStorage.setItem(savedKey, JSON.stringify(updated));
+  alert(alreadySaved ? "সেভ করা পোস্ট সরানো হয়েছে।" : "পোস্ট সেভ হয়েছে।");
+  loadFeed();
+}
+
+async function shareVideo(video) {
+  const url = `${location.origin}${location.pathname}?video=${encodeURIComponent(video.id)}`;
+  const shareData = {
+    title: video.title || "RiyazTube",
+    text: "RiyazTube-এ এই ভিডিওটি দেখুন!",
+    url
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      alert("ভিডিওর লিংক কপি হয়েছে।");
+    } else {
+      prompt("এই লিংকটি কপি করুন:", url);
+    }
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      prompt("ভিডিওর লিংক কপি করুন:", url);
+    }
+  }
+}
+
+async function loadComments(videoId) {
+  const host = document.querySelector(
+    `[data-comments="${CSS.escape(String(videoId))}"]`
+  );
+  if (!host) return;
+
+  host.innerHTML = '<div class="muted">কমেন্ট লোড হচ্ছে...</div>';
+
+  try {
+    let result = await db
+      .from("video_comments")
+      .select("*")
+      .eq("video_id", videoId)
+      .order("created_at", { ascending: true });
+
+    if (result.error) throw result.error;
+
+    const comments = result.data || [];
+
+    if (!comments.length) {
+      host.innerHTML = '<div class="muted">এখনো কোনো কমেন্ট নেই। প্রথম কমেন্টটি করুন!</div>';
+      return;
+    }
+
+    host.innerHTML = comments.map(comment => {
+      const text = comment.comment ?? comment.content ?? comment.body ?? "";
+      const safeText = escapeHTML(String(text));
+      const name = escapeHTML(
+        comment.username || comment.full_name || "ব্যবহারকারী"
+      );
+
+      return `
+        <div class="comment-item">
+          <strong>${name}</strong>
+          <p>${safeText}</p>
+        </div>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error("Comments:", error);
+    host.innerHTML = '<div class="muted">কমেন্ট দেখানো যাচ্ছে না। টেবিলের নীতি পরীক্ষা করুন।</div>';
+  }
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+async function submitComment(videoId, input, button) {
+  if (!currentUser) {
+    alert("কমেন্ট করতে আগে লগইন করুন।");
+    showAuth("login");
+    return;
+  }
+
+  const message = input.value.trim();
+  if (!message) {
+    input.focus();
+    return;
+  }
+
+  button.disabled = true;
+
+  try {
+    let result = await db.from("video_comments").insert({
+      video_id: videoId,
+      user_id: currentUser.id,
+      comment: message
     });
 
-    client.auth.onAuthStateChange((_event, session) => {
-      showSession(session?.user || null);
-    });
+    if (result.error && /comment/i.test(result.error.message || "")) {
+      result = await db.from("video_comments").insert({
+        video_id: videoId,
+        user_id: currentUser.id,
+        content: message
+      });
+    }
 
-    $('uploadForm').addEventListener('submit', async event => {
-      event.preventDefault();
+    if (result.error) throw result.error;
 
-      if (!currentUser) {
-        message('uploadStatus', 'ভিডিও আপলোড করতে আগে লগইন করুন।', '#c62828');
-        return;
-      }
+    input.value = "";
+    await loadComments(videoId);
+  } catch (error) {
+    console.error(error);
+    alert("কমেন্ট পোস্ট করা যায়নি। video_comments টেবিলের কলাম ও RLS নীতি পরীক্ষা করুন।");
+  } finally {
+    button.disabled = false;
+  }
+}
 
-      const file = $('videoFile').files[0];
-      if (!file) {
-        message('uploadStatus', 'আগে একটি ভিডিও ফাইল নির্বাচন করুন।', '#c62828');
-        return;
-      }
+/* ===== ভিডিও আপলোড ===== */
 
-      if (!file.type.startsWith('video/')) {
-        message('uploadStatus', 'শুধু ভিডিও ফাইল নির্বাচন করুন।', '#c62828');
-        return;
-      }
+function openUploadModal() {
+  if (!currentUser) {
+    alert("ভিডিও আপলোড করতে আগে লগইন করুন।");
+    showAuth("login");
+    return;
+  }
 
-      if (file.size > 50 * 1024 * 1024) {
-        message('uploadStatus', 'ফাইলটি ৫০ MB-এর বেশি। ছোট ভিডিও নির্বাচন করুন।', '#c62828');
-        return;
-      }
+  const old = document.getElementById("uploadModal");
+  if (old) old.remove();
 
-      // নামের সংঘর্ষ ও বিশেষ অক্ষরের সমস্যা কমাতে নতুন ফাইলনাম।
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = Date.now() + '_' + safeName;
-      $('uploadBtn').disabled = true;
-      message('uploadStatus', 'ভিডিও আপলোড হচ্ছে। পেজ বন্ধ করবেন না...', '#344054');
+  const modal = document.createElement("div");
+  modal.id = "uploadModal";
+  modal.className = "modal-overlay";
 
-      try {
-        const { error } = await client.storage.from('videos').upload(path, file, {
+  modal.innerHTML = `
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="বন্ধ করুন">✕</button>
+      <h2>🎬 ভিডিও আপলোড করুন</h2>
+      <p class="muted">আপনার ভিডিও ও শিরোনাম দিন। বড় ভিডিও আপলোড হতে সময় লাগতে পারে।</p>
+      <form id="uploadForm">
+        <label for="uploadTitle">ভিডিওর শিরোনাম</label>
+        <input id="uploadTitle" maxlength="150" required placeholder="ভিডিওর নাম লিখুন">
+
+        <label for="uploadDescription">বিবরণ</label>
+        <textarea id="uploadDescription" rows="3" maxlength="3000" placeholder="ভিডিও সম্পর্কে লিখুন"></textarea>
+
+        <label for="uploadFile">ভিডিও ফাইল</label>
+        <input id="uploadFile" type="file" accept="video/*" required>
+
+        <div id="uploadProgress" class="muted"></div>
+        <button class="primary-btn" type="submit">আপলোড করুন</button>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  modal.querySelector(".modal-close").onclick = () => modal.remove();
+  modal.addEventListener("click", event => {
+    if (event.target === modal) modal.remove();
+  });
+
+  modal.querySelector("#uploadForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const title = modal.querySelector("#uploadTitle").value.trim();
+    const description = modal.querySelector("#uploadDescription").value.trim();
+    const file = modal.querySelector("#uploadFile").files[0];
+    const progress = modal.querySelector("#uploadProgress");
+    const submit = modal.querySelector('button[type="submit"]');
+
+    if (!file || !title) return;
+
+    if (!file.type.startsWith("video/")) {
+      alert("দয়া করে একটি ভিডিও ফাইল নির্বাচন করুন।");
+      return;
+    }
+
+    const maxBytes = 50 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      alert("এই সহজ আপলোড ব্যবস্থায় সর্বোচ্চ ৫০ MB ফাইল দিন। বড় ভিডিওর জন্য আলাদা আপলোড ব্যবস্থা লাগবে।");
+      return;
+    }
+
+    submit.disabled = true;
+    progress.textContent = "ভিডিও আপলোড হচ্ছে...";
+
+    const cleanName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${currentUser.id}/${Date.now()}_${cleanName}`;
+
+    try {
+      const { error: uploadError } = await db.storage
+        .from("videos")
+        .upload(path, file, {
+          cacheControl: "3600",
           upsert: false,
           contentType: file.type
         });
-        if (error) throw error;
 
-        $('videoFile').value = '';
-        message('uploadStatus', 'ভিডিও সফলভাবে আপলোড হয়েছে!', '#16803d');
-        await fetchVideos();
-      } catch (error) {
-        message('uploadStatus', 'আপলোড ব্যর্থ: ' + error.message, '#c62828');
-      } finally {
-        $('uploadBtn').disabled = false;
+      if (uploadError) throw uploadError;
+
+      const { error: rowError } = await db.from("videos").insert({
+        user_id: currentUser.id,
+        title,
+        description,
+        storage_path: path
+      });
+
+      if (rowError) {
+        await db.storage.from("videos").remove([path]);
+        throw rowError;
       }
-    });
 
-    async function fetchVideos() {
-      if (loadingVideos) return;
-      loadingVideos = true;
-      $('refreshBtn').disabled = true;
-      message('feedStatus', 'ভিডিও লোড হচ্ছে...', '#344054');
-      $('videoFeed').replaceChildren();
+      progress.textContent = "আপলোড সম্পন্ন হয়েছে!";
+      alert("আপনার ভিডিও আপলোড হয়েছে।");
+      modal.remove();
+      await loadFeed();
+    } catch (error) {
+      console.error("Upload:", error);
+      progress.textContent = "আপলোড ব্যর্থ হয়েছে।";
+      alert("ভিডিও আপলোড হয়নি। videos টেবিলের কলাম, Storage policy এবং RLS পরীক্ষা করুন।");
+    } finally {
+      if (document.body.contains(submit)) submit.disabled = false;
+    }
+  });
+}
 
-      try {
-        const { data, error } = await client.storage.from('videos').list('', {
-          limit: 100,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
-        if (error) throw error;
+/* ===== নেভিগেশন ও অন্যান্য স্ক্রিন ===== */
 
-        // কেবল মূল ফোল্ডারের ভিডিও ফাইল দেখানো হবে।
-        const files = (data || []).filter(file =>
-          file.name &&
-          file.name !== '.emptyFolderPlaceholder' &&
-          file.metadata &&
-          typeof file.metadata.mimetype === 'string' &&
-          file.metadata.mimetype.startsWith('video/')
-        );
+function navigateTo(page) {
+  const app = document.getElementById("appContent");
+  if (!app) return;
 
-        if (files.length === 0) {
-          message('feedStatus', 'এখনো কোনো ভিডিও পাওয়া যায়নি। লগইন করে প্রথম ভিডিও আপলোড করুন!', '#68748a');
-          return;
-        }
+  if (page === "home" || page === "feed") {
+    loadFeed();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
 
-        message('feedStatus', files.length + 'টি ভিডিও পাওয়া গেছে।', '#16803d');
+  if (page === "upload" || page === "create") {
+    openUploadModal();
+    return;
+  }
 
-        for (const file of files) {
-          const { data: urlData } = client.storage.from('videos').getPublicUrl(file.name);
-          if (!urlData?.publicUrl) continue;
-
-          const card = document.createElement('article');
-          card.className = 'video-card';
-
-          const title = document.createElement('div');
-          title.className = 'filename';
-          title.textContent = '📹 ' + file.name;
-
-          const player = document.createElement('video');
-          player.controls = true;
-          player.preload = 'metadata';
-          player.playsInline = true;
-          player.src = urlData.publicUrl;
-
-          card.append(title, player);
-          $('videoFeed').appendChild(card);
-        }
-      } catch (error) {
-        message('feedStatus', 'ভিডিও তালিকা আনতে ব্যর্থ: ' + error.message, '#c62828');
-      } finally {
-        loadingVideos = false;
-        $('refreshBtn').disabled = false;
-      }
+  if (page === "saved") {
+    const ids = getSavedVideos();
+    if (!ids.length) {
+      alert("আপনার সেভ করা পোস্ট এখনো নেই।");
+      return;
     }
 
-    $('refreshBtn').addEventListener('click', fetchVideos);
-    loadSession();
-  </script>
+    alert("সেভ করা পোস্টগুলো এই ব্রাউজারেই রাখা হয়েছে। ফিডে ফিরে সেভ করা পোস্ট দেখতে পারবেন।");
+    loadFeed();
+    return;
+  }
+
+  if (page === "profile") {
+    showProfile();
+    return;
+  }
+
+  if (page === "notifications") {
+    loadNotifications();
+    return;
+  }
+
+  if (page === "settings") {
+    showSettings();
+    return;
+  }
+
+  if (page === "stories" || page === "reels") {
+    alert("এই ফিচারের জন্য আলাদা ডেটাবেস ও স্ক্রিন যোগ করতে হবে। আপাতত ভিডিও ফিড থেকে ভিডিও দেখুন।");
+    return;
+  }
+
+  loadFeed();
+}
+
+function showProfile() {
+  if (!currentUser) {
+    showAuth("login");
+    return;
+  }
+
+  const app = document.getElementById("appContent");
+  const name = currentProfile?.full_name || currentProfile?.username || currentUser.email || "আমার প্রোফাইল";
+  const username = currentProfile?.username || "ব্যবহারকারী";
+  const bio = currentProfile?.bio || "RiyazTube-এ স্বাগতম!";
+
+  app.innerHTML = `
+    <section class="profile-panel">
+      <h2>👤 আমার প্রোফাইল</h2>
+      <div class="profile-avatar">${escapeHTML(name.slice(0, 1).toUpperCase())}</div>
+      <h3>${escapeHTML(name)}</h3>
+      <p class="muted">@${escapeHTML(username)}</p>
+      <p>${escapeHTML(bio)}</p>
+      <form id="profileForm">
+        <label for="profileName">আপনার নাম</label>
+        <input id="profileName" maxlength="80" value="${escapeHTML(currentProfile?.full_name || "")}" required>
+        <label for="profileUsername">ইউজারনেম</label>
+        <input id="profileUsername" maxlength="40" value="${escapeHTML(currentProfile?.username || "")}" placeholder="আপনার ইউজারনেম">
+        <label for="profileBio">পরিচিতি</label>
+        <textarea id="profileBio" maxlength="500" rows="3">${escapeHTML(currentProfile?.bio || "")}</textarea>
+        <button class="primary-btn" type="submit">প্রোফাইল সংরক্ষণ</button>
+      </form>
+      <button id="profileBack" class="secondary-btn" type="button">হোম ফিডে ফিরুন</button>
+    </section>
+  `;
+
+  app.querySelector("#profileBack").onclick = () => loadFeed();
+
+  app.querySelector("#profileForm").onsubmit = async event => {
+    event.preventDefault();
+
+    const full_name = app.querySelector("#profileName").value.trim();
+    const username = app.querySelector("#profileUsername").value.trim();
+    const bio = app.querySelector("#profileBio").value.trim();
+
+    try {
+      const { error } = await db.from("profiles").upsert({
+        id: currentUser.id,
+        full_name,
+        username,
+        bio
+      }, { onConflict: "id" });
+
+      if (error) throw error;
+
+      currentProfile = {
+        ...(currentProfile || {}),
+        id: currentUser.id,
+        full_name,
+        username,
+        bio
+      };
+
+      alert("প্রোফাইল সংরক্ষণ হয়েছে।");
+      showProfile();
+    } catch (error) {
+      console.error(error);
+      alert("প্রোফাইল সংরক্ষণ হয়নি। username অনন্য কি না এবং RLS নীতি পরীক্ষা করুন।");
+    }
+  };
+}
+
+function showSettings() {
+  const app = document.getElementById("appContent");
+  app.innerHTML = `
+    <section class="profile-panel">
+      <h2>⚙️ সেটিংস</h2>
+      <p>আপনার অ্যাকাউন্টের নিরাপত্তার জন্য লগআউট করার সময় নিজের ডিভাইস ব্যবহার করুন।</p>
+      <button id="settingsProfile" class="secondary-btn" type="button">প্রোফাইল সম্পাদনা</button>
+      <button id="settingsLogout" class="primary-btn" type="button">লগআউট</button>
+      <button id="settingsBack" class="secondary-btn" type="button">হোমে ফিরুন</button>
+    </section>
+  `;
+
+  app.querySelector("#settingsProfile").onclick = () => showProfile();
+  app.querySelector("#settingsBack").onclick = () => loadFeed();
+  app.querySelector("#settingsLogout").onclick = async () => {
+    if (!confirm("আপনি কি লগআউট করতে চান?")) return;
+
+    const { error } = await db.auth.signOut();
+    if (error) {
+      alert("লগআউট করা যায়নি। আবার চেষ্টা করুন।");
+      return;
+    }
+
+    currentUser = null;
+    currentProfile = null;
+    showAuth("login");
+  };
+}
+
+function loadNotifications() {
+  const app = document.getElementById("appContent");
+  app.innerHTML = `
+    <section class="profile-panel">
+      <h2>🔔 নোটিফিকেশন</h2>
+      <p>এখনো নোটিফিকেশন সিস্টেম যুক্ত করা হয়নি। নতুন কমেন্ট ও লাইক দেখানোর জন্য আলাদা notifications টেবিল ও ব্যবস্থা লাগবে।</p>
+      <button id="noticeBack" class="primary-btn" type="button">হোম ফিডে ফিরুন</button>
+    </section>
+  `;
+  app.querySelector("#noticeBack").onclick = () => loadFeed();
+}
+
+/* ===== বোতাম ক্লিক পরিচালনা ===== */
+
+document.addEventListener("click", async event => {
+  const likeButton = event.target.closest("[data-like]");
+  if (likeButton) {
+    event.preventDefault();
+    await toggleLike(likeButton.dataset.like, likeButton);
+    return;
+  }
+
+  const saveButton = event.target.closest("[data-save]");
+  if (saveButton) {
+    event.preventDefault();
+    saveVideo(saveButton.dataset.save);
+    return;
+  }
+
+  const shareButton = event.target.closest("[data-share]");
+  if (shareButton) {
+    event.preventDefault();
+    const video = videoCache?.find(item => String(item.id) === String(shareButton.dataset.share));
+    if (video) await shareVideo(video);
+    return;
+  }
+
+  const commentButton = event.target.closest("[data-comment-submit]");
+  if (commentButton) {
+    event.preventDefault();
+    const id = commentButton.dataset.commentSubmit;
+    const input = document.querySelector(`[data-comment-input="${CSS.escape(String(id))}"]`);
+    if (input) await submitComment(id, input, commentButton);
+  }
+});
+
+/* অতিরিক্ত স্টাইল */
+(function addExtraStyles() {
+  if (document.getElementById("riyaz-extra-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "riyaz-extra-styles";
+  style.textContent = `
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(10, 15, 30, .68);
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px; overflow-y: auto;
+    }
+    .modal-card, .profile-panel {
+      background: var(--card, #fff); color: var(--text, #172033);
+      border-radius: 18px; padding: 24px;
+      width: 100%; max-width: 540px; margin: 18px auto;
+      box-shadow: 0 15px 45px rgba(0,0,0,.16);
+    }
+    .modal-card { position: relative; }
+    .modal-close {
+      position: absolute; top: 12px; right: 12px;
+      border: 0; background: transparent; font-size: 22px; cursor: pointer;
+    }
+    .modal-card form, .profile-panel form {
+      display: grid; gap: 10px; margin-top: 18px;
+    }
+    .modal-card input, .modal-card textarea,
+    .profile-panel input, .profile-panel textarea {
+      width: 100%; box-sizing: border-box; padding: 12px;
+      border: 1px solid #d6dbe5; border-radius: 10px;
+      font: inherit; background: #fff; color: #172033;
+    }
+    .primary-btn, .secondary-btn {
+      padding: 12px 16px; border-radius: 10px; cursor: pointer;
+      font: inherit; font-weight: 600; margin: 6px 5px 0 0;
+    }
+    .primary-btn { background: #2563eb; color: #fff; border: 0; }
+    .secondary-btn { background: transparent; border: 1px solid #cbd5e1; color: inherit; }
+    .primary-btn:disabled { opacity: .6; cursor: wait; }
+    .profile-panel { max-width: 620px; }
+    .profile-avatar {
+      width: 76px; height: 76px; border-radius: 50%;
+      background: #dbeafe; color: #1d4ed8; display: grid;
+      place-items: center; font-size: 30px; font-weight: 800;
+    }
+    .comment-item { padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
+    .comment-item p { margin: 5px 0 0; overflow-wrap: anywhere; }
+    .muted { color: #64748b; font-size: .92em; }
+    @media (max-width: 600px) {
+      .modal-card, .profile-panel { padding: 18px; }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+/* ===== শেষ ===== */
+</script>
 </body>
-</html>
+  </html>
+
+  
+  
