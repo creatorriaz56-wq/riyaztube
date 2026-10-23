@@ -250,7 +250,7 @@
 
       // নামের সংঘর্ষ ও বিশেষ অক্ষরের সমস্যা কমাতে নতুন ফাইলনাম।
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = currentUser.id + '/' + Date.now() + '_' + safeName;
+      const path = Date.now() + '_' + safeName;
       $('uploadBtn').disabled = true;
       message('uploadStatus', 'ভিডিও আপলোড হচ্ছে। পেজ বন্ধ করবেন না...', '#344054');
 
