@@ -1248,25 +1248,31 @@ function openUploadModal() {
 
     try {
       const { error: uploadError } = await db.storage
-        .from("videos")
-        .upload(path, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type
-        });
+  .from("videos")
+  .upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+    contentType: file.type
+  });
 
-      if (uploadError) throw uploadError;
+if (uploadError) throw uploadError;
 
-      const { error: rowError } = await db.from("videos").insert({
-        user_id: currentUser.id,
-        title,
-        description,
-        storage_path: path
-      });
+// স্টোরেজ থেকে আপলোড করা ফাইলের পাবলিক ইউআরএল (Public URL) তৈরি করা
+const { data: urlData } = db.storage.from("videos").getPublicUrl(path);
+const videoUrl = urlData.publicUrl;
 
-      if (rowError) {
-        await db.storage.from("videos").remove([path]);
-        throw rowError;
+// ডাটাবেসে video_url সহ ভিডিওর তথ্য সেভ করা
+const { error: rowError } = await db.from("videos").insert({
+  user_id: currentUser.id,
+  title,
+  description,
+  video_url: videoUrl,
+  storage_path: path
+});
+
+if (rowError) {
+  await db.storage.from("videos").remove([path]);
+  throw rowError;
       }
 
       progress.textContent = "আপলোড সম্পন্ন হয়েছে!";
