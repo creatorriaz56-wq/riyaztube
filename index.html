@@ -1276,7 +1276,7 @@ function openUploadModal() {
     } catch (error) {
       console.error("Upload:", error);
       progress.textContent = "আপলোড ব্যর্থ হয়েছে।";
-      alert("ভিডিও আপলোড হয়নি। videos টেবিলের কলাম, Storage policy এবং RLS পরীক্ষা করুন।");
+      alert("ভিডিও আপলোড হয়নি: " + (error.message || String(error)));
     } finally {
       if (document.body.contains(submit)) submit.disabled = false;
     }
