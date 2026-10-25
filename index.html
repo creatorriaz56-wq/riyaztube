@@ -1541,7 +1541,7 @@ document.addEventListener("click", async event => {
 
 /* ===== শেষ ===== */
 </script>
-if ("serviceWorker" in navigator) {
+<script>if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("./pwabuilder-sw.js")
