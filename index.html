@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#ffffff">
 <title>RiyazTube — Connect & Learn</title>
 <meta name="description" content="RiyazTube — ভিডিও দেখুন, শেয়ার করুন এবং নতুন কিছু শিখুন।">
-
+<link rel="manifest" href="./manifest.json">
 <style>
 :root{
   --primary:#6257e8;
@@ -1541,6 +1541,16 @@ document.addEventListener("click", async event => {
 
 /* ===== শেষ ===== */
 </script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./pwabuilder-sw.js")
+      .catch(error => {
+        console.error("Service Worker error:", error);
+      });
+  });
+}
+  </script>
 </body>
   </html>
 
