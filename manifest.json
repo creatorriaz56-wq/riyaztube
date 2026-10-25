@@ -1,0 +1,18 @@
+{
+  "background_color": "#e4dcda",
+  "description": "RiyazTube — ভিডিও দেখুন, শেয়ার করুন এবং নতুন কিছু শিখুন।",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "BiniMeti Social",
+  "orientation": "any",
+  "scope": "https://creatorriaz56-wq.github.io/riyaztube/",
+  "short_name": "BiniMeti Social",
+  "start_url": "https://creatorriaz56-wq.github.io/riyaztube/",
+  "theme_color": "#93b588",
+  "id": "binimeti-social",
+  "lang": "bn",
+  "categories": [
+    "social",
+    "video"
+  ]
+}
